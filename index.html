@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bugün Özel Bir Gün Mü?</title>
+  <style>
+    body { margin:0; height:100vh; background:linear-gradient(135deg,#ff9a9e,#fad0c4); color:white; font-family:Arial; text-align:center; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    h1 { font-size:3.5rem; margin:0; }
+    p { font-size:1.8rem; margin:20px 0; }
+    button { padding:15px 40px; font-size:1.8rem; margin:10px; border:none; border-radius:50px; cursor:pointer; color:white; }
+    #yes { background:#4caf50; }
+    #no { background:#f44336; }
+    #final { font-size:2.5rem; margin-top:40px; font-weight:bold; min-height:100px; line-height:1.5; }
+    canvas { position:fixed; top:0; left:0; pointer-events:none; }
+  </style>
+</head>
+<body>
+
+  <div>
+    <h1>Bugün özel bir gün mü?</h1>
+    <p>Sevgili <span id="isim">dünyanın en iyi arkadaşı</span>,</p>
+    <button id="yes" onclick="yesClicked()">Evet</button>
+    <button id="no" onclick="noClicked()">Hayır</button>
+    <p id="final"></p>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    let size = 1.8;
+
+    function noClicked() {
+      size += 0.5;
+      document.getElementById('yes').style.fontSize = size + 'rem';
+      document.getElementById('yes').style.padding = (15 + size*10) + 'px ' + (40 + size*20) + 'px';
+
+      const msgs = [
+        "Ciddi misin? Tekrar düşün lütfen...",
+        "Ama bugün çok özel ki...",
+        "Off ya, hadi evet de artık 😂",
+        "Artık buton dev oldu, hayır diyemezsin 😏"
+      ];
+      let msg = msgs[Math.min(msgs.length-1, Math.floor((size-1.8)/0.5))];
+      document.getElementById('final').innerText = msg;
+
+      konfeti(30);
+    }
+
+    function yesClicked() {
+      document.getElementById('final').innerHTML = `
+        O zaman...<br><br>
+        Ben böyle şeyler pek yapamam ama sen harika bir insansın, iyi ki varsın ❤️<br>
+        Diğer insanlardan farklısın, zorlu süreçten geçiyorsun tabii ki ama iyi ki varsın 🥺<br>
+        Seni kırdığım zamanlarda olmuştur tabii ki, özür dilerim 🙏<br>
+        Doğum günün kutlu olsun, nice mutlu yıllara! 🎉🎂<br>
+        Sen istediğin sürece her zaman yanındayım 🤝
+      `;
+      document.getElementById('yes').innerText = "KUTLADIK!";
+      document.getElementById('no').style.display = 'none';
+      konfeti(120);
+    }
+
+    function konfeti(adet) {
+      const c = document.getElementById('confetti');
+      const ctx = c.getContext('2d');
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+
+      let parts = [];
+      for(let i=0; i<adet; i++){
+        parts.push({
+          x: Math.random()*c.width,
+          y: Math.random()*c.height - c.height,
+          r: Math.random()*6 + 3,
+          color: ['#ff0','#f00','#0f0','#00f','#ff69b4'][Math.floor(Math.random()*5)],
+          speed: Math.random()*4 + 2
+        });
+      }
+
+      function ciz() {
+        ctx.clearRect(0,0,c.width,c.height);
+        parts.forEach((p,i) => {
+          p.y += p.speed;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+          if(p.y > c.height) parts.splice(i,1);
+        });
+        if(parts.length) requestAnimationFrame(ciz);
+      }
+      ciz();
+    }
+
+    konfeti(40);
+  </script>
+</body>
+</html>
